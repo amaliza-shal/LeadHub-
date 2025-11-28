@@ -181,6 +181,22 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeApp();
 });
 
+// Helper: fetch and safely parse JSON (handles empty or text responses)
+async function safeFetchJSON(url, opts) {
+    const res = await fetch(url, opts);
+    const text = await res.text().catch(() => '');
+    let body = null;
+    if (text) {
+        try {
+            body = JSON.parse(text);
+        } catch (err) {
+            // not JSON, return raw text
+            body = text;
+        }
+    }
+    return { ok: res.ok, status: res.status, body };
+}
+
 function initializeApp() {
     setupEventListeners();
     checkAuthentication();
@@ -195,9 +211,9 @@ function initializeApp() {
 
 // Load courses from backend and render into .courses-grid
 function loadCourses() {
-    fetch('/api/courses')
-        .then(res => res.json())
-        .then(courses => {
+    safeFetchJSON('/api/courses')
+        .then(({ ok, body }) => {
+            const courses = ok && Array.isArray(body) ? body : [];
             const grid = document.querySelector('.courses-grid');
             if (!grid) return;
 
@@ -379,12 +395,11 @@ function handleLogin(e) {
     
     // Attempt login via backend
     showNotification('Logging in...', 'info');
-    fetch('/api/auth/login', {
+    safeFetchJSON('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
     })
-    .then(res => res.json().then(body => ({ ok: res.ok, body })))
     .then(({ ok, body }) => {
         if (!ok) {
             // Show inline error if present
@@ -452,12 +467,11 @@ function handleSignup(e) {
     }
 
     showNotification('Creating your account...', 'info');
-    fetch('/api/auth/signup', {
+    safeFetchJSON('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
     })
-    .then(res => res.json().then(body => ({ ok: res.ok, body })))
     .then(({ ok, body }) => {
         if (!ok) {
             const msg = (body && body.error) ? body.error : 'Signup failed';
@@ -730,9 +744,9 @@ function startCourse(courseId) {
     showNotification(`🚀 Opening "${courseName}"...`, 'info');
 
     // Fetch course details from server (may include video URL)
-    fetch(`/api/courses/${encodeURIComponent(courseId)}`)
-        .then(res => res.json())
-        .then(course => {
+    safeFetchJSON(`/api/courses/${encodeURIComponent(courseId)}`)
+        .then(({ ok, body }) => {
+            const course = ok ? body : null;
             // If there's a video URL, open it in the modal
             if (course && course.videoUrl) {
                 openVideoModal(course.videoUrl);
@@ -779,10 +793,9 @@ function initializeProgress() {
 
     if (token) {
         // Fetch progress from server for authenticated users
-        fetch(`/api/progress`, { headers: { 'Authorization': `Bearer ${token}` } })
-            .then(res => res.json().then(body => ({ ok: res.ok, body })))
+        safeFetchJSON(`/api/progress`, { headers: { 'Authorization': `Bearer ${token}` } })
             .then(({ ok, body }) => {
-                if (ok) {
+                if (ok && body) {
                     localStorage.setItem('userProgress', JSON.stringify(body));
                 } else {
                     // Fallback initialization if server returns error
@@ -1135,15 +1148,18 @@ window.addEventListener('error', function(e) {
 
 // Simple server check to help bring the app to life when an Express backend is present
 function checkServer() {
-    fetch('/api/status')
-        .then(res => res.json())
-        .then(data => {
-            console.log('Server status:', data);
-            showNotification('Connected to backend ✓', 'success');
+    safeFetchJSON('/api/status')
+        .then(({ ok, body }) => {
+            if (ok) {
+                console.log('Server status:', body);
+                showNotification('Connected to backend ✓', 'success');
+            } else {
+                console.warn('Backend responded with non-OK status', body);
+                showNotification('Backend error', 'error');
+            }
         })
         .catch(err => {
             console.warn('No backend detected:', err.message);
-            // Not intrusive: only show info when running from an http(s) origin
             showNotification('Running in static mode (no backend)', 'info');
         });
 }
