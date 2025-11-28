@@ -185,6 +185,10 @@ function initializeApp() {
     setupEventListeners();
     checkAuthentication();
     initializeProgress();
+    // Check backend availability (if a server is running)
+    if (window.location.protocol.indexOf('http') === 0) {
+        checkServer();
+    }
 }
 
 // Enhanced setupEventListeners
@@ -313,15 +317,29 @@ function handleLogin(e) {
         return;
     }
     
-    // Simulate login process
+    // Attempt login via backend
     showNotification('Logging in...', 'info');
-    
-    setTimeout(() => {
-        localStorage.setItem('userName', email.split('@')[0]);
-        localStorage.setItem('userEmail', email);
+    fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+    })
+    .then(res => res.json().then(body => ({ ok: res.ok, body })))
+    .then(({ ok, body }) => {
+        if (!ok) {
+            showNotification(body.error || 'Login failed', 'error');
+            return;
+        }
+        const user = body.user || {};
+        localStorage.setItem('authToken', body.token || 'demo-token');
+        localStorage.setItem('userName', user.name || (user.email || email).split('@')[0]);
+        localStorage.setItem('userEmail', user.email || email);
         showNotification('Welcome back! 🎉', 'success');
         showSection('home');
-    }, 1500);
+    })
+    .catch(err => {
+        showNotification('Network error: ' + err.message, 'error');
+    });
 }
 
 function handleSignup(e) {
@@ -350,28 +368,42 @@ function handleSignup(e) {
         showNotification('Password must be at least 6 characters', 'error');
         return;
     }
-    
-    // Simulate signup process
+
     showNotification('Creating your account...', 'info');
-    
-    setTimeout(() => {
-        localStorage.setItem('userName', name);
-        localStorage.setItem('userEmail', email);
+    fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+    })
+    .then(res => res.json().then(body => ({ ok: res.ok, body })))
+    .then(({ ok, body }) => {
+        if (!ok) {
+            showNotification(body.error || 'Signup failed', 'error');
+            return;
+        }
+        const user = body.user || {};
+        localStorage.setItem('authToken', body.token || 'demo-token');
+        localStorage.setItem('userName', user.name || user.email.split('@')[0]);
+        localStorage.setItem('userEmail', user.email);
         showNotification('Account created successfully! 🎉', 'success');
         showSection('home');
-    }, 1500);
+    })
+    .catch(err => {
+        showNotification('Network error: ' + err.message, 'error');
+    });
 }
 
 function handleLogout() {
     localStorage.removeItem('userName');
     localStorage.removeItem('userEmail');
     localStorage.removeItem('userProgress');
+    localStorage.removeItem('authToken');
     showNotification('Logged out successfully', 'info');
     showSection('login');
 }
 
 function checkAuthentication() {
-    if (!localStorage.getItem('userName')) {
+    if (!localStorage.getItem('authToken')) {
         showSection('login');
     } else {
         showSection('home');
@@ -942,3 +974,18 @@ function showNotification(message, type = 'info') {
 window.addEventListener('error', function(e) {
     console.warn('Caught error:', e.error);
 });
+
+// Simple server check to help bring the app to life when an Express backend is present
+function checkServer() {
+    fetch('/api/status')
+        .then(res => res.json())
+        .then(data => {
+            console.log('Server status:', data);
+            showNotification('Connected to backend ✓', 'success');
+        })
+        .catch(err => {
+            console.warn('No backend detected:', err.message);
+            // Not intrusive: only show info when running from an http(s) origin
+            showNotification('Running in static mode (no backend)', 'info');
+        });
+}
