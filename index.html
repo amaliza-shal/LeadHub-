@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeadHub - Leadership Development</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Custom Background -->
+    <div class="custom-background"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-crown gold"></i>
+                LeadHub
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#about"><i class="fas fa-info-circle"></i> About Us</a></li>
+                <li><a href="#courses"><i class="fas fa-book"></i> Courses</a></li>
+                <li><a href="#challenges"><i class="fas fa-tasks"></i> Challenges</a></li>
+                <li><a href="#progress"><i class="fas fa-chart-line"></i> Progress</a></li>
+                <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer"></div>
+
+    <!-- LOGIN/SIGNUP SECTION -->
+    <section id="login" class="section active">
+        <div class="login-container">
+            <div class="login-card">
+                <h1 class="logo-main">
+                    <i class="fas fa-crown gold"></i>
+                    LeadHub
+                </h1>
+                <h2>Welcome to LeadHub</h2>
+                
+                <!-- Auth Toggle -->
+                <div class="auth-toggle">
+                    <button class="toggle-btn active" onclick="showAuthForm('login')">Sign In</button>
+                    <button class="toggle-btn" onclick="showAuthForm('signup')">Sign Up</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form active">
+                    <div class="form-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signupForm" class="auth-form">
+                    <div class="form-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="signupName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="signupPassword" placeholder="Create a password" required>
+                    </div>
+                    <button type="submit" class="auth-btn">
+                        <i class="fas fa-user-plus"></i>
+                        Create Account
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOME SECTION -->
+    <section id="home" class="section">
+        <div class="container">
+            <div class="hero-section">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1>Welcome, <span id="userName" class="gold">Leader</span>!</h1>
+                        <p class="hero-subtitle">"Empowering Voices, Building Leaders"</p>
+                        <p>Unlock your leadership potential through action, not just position. Start your journey to becoming a confident, values-driven leader today.</p>
+                        
+                        <div class="hero-stats">
+                            <div class="stat">
+                                <div class="stat-number" id="completedCourses">0</div>
+                                <div class="stat-label">Courses Completed</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number" id="completedChallenges">0</div>
+                                <div class="stat-label">Challenges Done</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number" id="leadershipLevel">1</div>
+                                <div class="stat-label">Leadership Level</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-image">
+                        <div class="image-overlay">
+                            <p>"Leadership is not about being in charge. It's about taking care of those in your charge."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="action-card" onclick="showSection('courses')">
+                    <div class="action-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Start Learning</h3>
+                    <p>Explore 12+ leadership courses and develop essential skills</p>
+                    <div class="badge">12 Courses</div>
+                </div>
+                
+                <div class="action-card" onclick="showSection('challenges')">
+                    <div class="action-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Take Challenges</h3>
+                    <p>Test your skills with professional leadership assessments</p>
+                    <div class="progress-ring">
+                        <svg width="60" height="60">
+                            <circle class="progress-bg" cx="30" cy="30" r="25"></circle>
+                            <circle class="progress-bar" cx="30" cy="30" r="25"></circle>
+                        </svg>
+                        <div class="progress-text">3/8</div>
+                    </div>
+                </div>
+                
+                <div class="action-card" onclick="showSection('progress')">
+                    <div class="action-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Track Progress</h3>
+                    <p>Monitor your growth and leadership journey with analytics</p>
+                    <div class="trend-up">↑12%</div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity">
+                <h2><i class="fas fa-history gold"></i> Recent Activity</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon completed">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Public Speaking Basics</h4>
+                            <p>Course completed • 2 hours ago</p>
+                        </div>
+                        <div class="activity-points gold">+200 XP</div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-icon in-progress">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="activity-content">
+                            <h4>Emotional Intelligence Quiz</h4>
+                            <p>Assessment in progress • 1 day ago</p>
+                        </div>
+                        <div class="activity-points">150 XP</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT US SECTION -->
+    <section id="about" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h1>About LeadHub</h1>
+                <p>Empowering the next generation of ethical leaders through practical learning and real-world challenges.</p>
+            </div>
+
+            <div class="mission-grid">
+                <div class="mission-card">
+                    <div class="mission-icon">🎯</div>
+                    <h2>Our Mission</h2>
+                    <p>We believe leadership is not defined by position but by action. Our mission is to unlock that potential, raise standards, and create leaders who are capable, confident and values-driven.</p>
+                </div>
+
+                <div class="mission-card">
+                    <div class="mission-icon">🌍</div>
+                    <h2>Our Vision</h2>
+                    <p>A world full of skilled, ethical and adaptable leaders — shaping better organisations, stronger communities and a brighter future for everyone.</p>
+                </div>
+
+                <div class="mission-card">
+                    <div class="mission-icon">💎</div>
+                    <h2>Our Values</h2>
+                    <p>Integrity, resilience, and humanity guide everything we do. We believe in leading with purpose and making a positive impact in every interaction.</p>
+                </div>
+            </div>
+
+            <div class="stats-showcase">
+                <div class="stat-item">
+                    <div class="stat-number gold">500+</div>
+                    <div class="stat-label">Leaders Trained</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number gold">50+</div>
+                    <div class="stat-label">Learning Hours</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number gold">95%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COURSES SECTION -->
+    <section id="courses" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h1>Leadership Courses</h1>
+                <p>Master essential leadership skills through our comprehensive curriculum and practical exercises.</p>
+            </div>
+
+            <div class="courses-grid">
+                <!-- Core Leadership Courses -->
+                <div class="course-card">
+                    <div class="course-header">
+                        <div class="course-icon">👑</div>
+                        <span class="course-badge beginner">Core</span>
+                    </div>
+                    <h3>Leadership Fundamentals</h3>
+                    <p>Master the essential principles of effective leadership and build your leadership foundation.</p>
+                    
+                    <div class="video-preview">
+                        <div class="video-thumbnail" onclick="openVideoModal('https://www.youtube.com/embed/6T9TYZ9UuU4')">
+                            <div class="video-placeholder">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <p class="video-description">Watch: "What Makes a Great Leader?"</p>
+                    </div>
+                    
+                    <div class="course-meta">
+                        <span><i class="fas fa-clock"></i> 6 hours</span>
+                        <span><i class="fas fa-video"></i> 18 lessons</span>
+                        <span><i class="fas fa-star"></i> 4.9</span>
+                    </div>
+                    
+                    <div class="course-progress">
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 30%"></div>
+                        </div>
+                        <span>30% complete</span>
+                    </div>
+                    
+                    <button class="course-btn" onclick="startCourse('leadership-fundamentals')">
+                        <i class="fas fa-play"></i>
+                        Continue Learning
+                    </button>
+                </div>
+
+                <!-- Communication Courses -->
+                <div class="course-card">
+                    <div class="course-header">
+                        <div class="course-icon">🎤</div>
+                        <span class="course-badge intermediate">Essential</span>
+                    </div>
+                    <h3>Strategic Communication</h3>
+                    <p>Learn to communicate with clarity, confidence, and impact in any situation.</p>
+                    
+                    <div class="video-preview">
+                        <div class="video-thumbnail" onclick="openVideoModal('https://www.youtube.com/embed/HT3SC5xK9bQ')">
+                            <div class="video-placeholder">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <p class="video-description">Watch: "How to Speak So People Want to Listen"</p>
+                    </div>
+                    
+                    <div class="course-meta">
+                        <span><i class="fas fa-clock"></i> 5 hours</span>
+                        <span><i class="fas fa-video"></i> 15 lessons</span>
+                        <span><i class="fas fa-star"></i> 4.8</span>
+                    </div>
+                    
+                    <div class="course-progress">
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 0%"></div>
+                        </div>
+                        <span>Not started</span>
+                    </div>
+                    
+                    <button class="course-btn" onclick="startCourse('strategic-communication')">
+                        <i class="fas fa-play"></i>
+                        Start Learning
+                    </button>
+                </div>
+
+                <!-- Emotional Intelligence -->
+                <div class="course-card">
+                    <div class="course-header">
+                        <div class="course-icon">💖</div>
+                        <span class="course-badge intermediate">Essential</span>
+                    </div>
+                    <h3>Emotional Intelligence</h3>
+                    <p>Develop self-awareness, empathy, and social skills for better leadership relationships.</p>
+                    
+                    <div class="video-preview">
+                        <div class="video-thumbnail" onclick="openVideoModal('https://www.youtube.com/embed/Y7m9eNoB3NU')">
+                            <div class="video-placeholder">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <p class="video-description">Watch: "The Power of Emotional Intelligence"</p>
+                    </div>
+                    
+                    <div class="course-meta">
+                        <span><i class="fas fa-clock"></i> 4 hours</span>
+                        <span><i class="fas fa-video"></i> 12 lessons</span>
+                        <span><i class="fas fa-star"></i> 4.7</span>
+                    </div>
+                    
+                    <div class="course-progress">
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 0%"></div>
+                        </div>
+                        <span>Not started</span>
+                    </div>
+                    
+                    <button class="course-btn" onclick="startCourse('emotional-intelligence')">
+                        <i class="fas fa-play"></i>
+                        Start Learning
+                    </button>
+                </div>
+
+                <!-- Team Leadership -->
+                <div class="course-card">
+                    <div class="course-header">
+                        <div class="course-icon">👥</div>
+                        <span class="course-badge intermediate">Team</span>
+                    </div>
+                    <h3>Team Leadership Dynamics</h3>
+                    <p>Learn to build, motivate, and lead high-performing teams with confidence and empathy.</p>
+                    
+                    <div class="video-preview">
+                        <div class="video-thumbnail" onclick="openVideoModal('https://www.youtube.com/embed/rrkrvAUbU9Y')">
+                            <div class="video-placeholder">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <p class="video-description">Watch: "Building High-Performing Teams"</p>
+                    </div>
+                    
+                    <div class="course-meta">
+                        <span><i class="fas fa-clock"></i> 6 hours</span>
+                        <span><i class="fas fa-video"></i> 18 lessons</span>
+                        <span><i class="fas fa-star"></i> 4.9</span>
+                    </div>
+                    
+                    <div class="course-progress">
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 0%"></div>
+                        </div>
+                        <span>Not started</span>
+                    </div>
+                    
+                    <button class="course-btn" onclick="startCourse('team-leadership')">
+                        <i class="fas fa-play"></i>
+                        Start Learning
+                    </button>
+                </div>
+
+                <!-- Decision Making -->
+                <div class="course-card">
+                    <div class="course-header">
+                        <div class="course-icon">🧠</div>
+                        <span class="course-badge advanced">Strategic</span>
+                    </div>
+                    <h3>Strategic Decision Making</h3>
+                    <p>Develop critical thinking skills and make better decisions under pressure.</p>
+                    
+                    <div class="video-preview">
+                        <div class="video-thumbnail" onclick="openVideoModal('https://www.youtube.com/embed/8bIys6JoEDw')">
+                            <div class="video-placeholder">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <p class="video-description">Watch: "Strategic Thinking for Leaders"</p>
+                    </div>
+                    
+                    <div class="course-meta">
+                        <span><i class="fas fa-clock"></i> 5 hours</span>
+                        <span><i class="fas fa-video"></i> 15 lessons</span>
+                        <span><i class="fas fa-star"></i> 4.8</span>
+                    </div>
+                    
+                    <div class="course-progress">
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 0%"></div>
+                        </div>
+                        <span>Not started</span>
+                    </div>
+                    
+                    <button class="course-btn" onclick="startCourse('strategic-decision-making')">
+                        <i class="fas fa-play"></i>
+                        Start Learning
+                    </button>
+                </div>
+
+                <!-- Conflict Resolution -->
+                <div class="course-card">
+                    <div class="course-header">
+                        <div class="course-icon">⚡</div>
+                        <span class="course-badge advanced">Advanced</span>
+                    </div>
+                    <h3>Conflict Resolution</h3>
+                    <p>Master techniques to resolve conflicts constructively and maintain team harmony.</p>
+                    
+                    <div class="video-preview">
+                        <div class="video-thumbnail" onclick="openVideoModal('https://www.youtube.com/embed/55n9pH_A0O8')">
+                            <div class="video-placeholder">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        <p class="video-description">Watch: "Turning Conflict into Opportunity"</p>
+                    </div>
+                    
+                    <div class="course-meta">
+                        <span><i class="fas fa-clock"></i> 4 hours</span>
+                        <span><i class="fas fa-video"></i> 12 lessons</span>
+                        <span><i class="fas fa-star"></i> 4.6</span>
+                    </div>
+                    
+                    <div class="course-progress">
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 0%"></div>
+                        </div>
+                        <span>Not started</span>
+                    </div>
+                    
+                    <button class="course-btn" onclick="startCourse('conflict-resolution')">
+                        <i class="fas fa-play"></i>
+                        Start Learning
+                    </button>
+                </div>
+            </div>
+
+            <!-- More Courses Button -->
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="course-btn" style="max-width: 300px; margin: 0 auto;" onclick="showMoreCourses()">
+                    <i class="fas fa-plus"></i>
+                    View All 12 Courses
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHALLENGES SECTION -->
+    <section id="challenges" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h1>Leadership Challenges & Assessments</h1>
+                <p>Test your skills with professional assessments and real-world leadership scenarios.</p>
+            </div>
+
+            <!-- Assessment Challenges -->
+            <div class="challenge-category">
+                <h3 class="category-title"><i class="fas fa-clipboard-check gold"></i> Professional Assessments</h3>
+                <div class="challenges-grid">
+                    <!-- Leadership Style Assessment -->
+                    <div class="challenge-card assessment-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">📊</div>
+                            <div class="challenge-points">200 XP</div>
+                        </div>
+                        <h3>Leadership Style Assessment</h3>
+                        <p>Discover your natural leadership style and learn how to adapt it to different situations.</p>
+                        
+                        <div class="challenge-meta">
+                            <span><i class="fas fa-clock"></i> 20 mins</span>
+                            <span><i class="fas fa-question"></i> 15 questions</span>
+                            <span><i class="fas fa-bolt"></i> Assessment</span>
+                        </div>
+                        
+                        <div class="assessment-preview">
+                            <div class="quiz-sample">
+                                <p><strong>Sample Question:</strong> When faced with a team conflict, I typically...</p>
+                                <div class="quiz-options">
+                                    <div class="quiz-option">A) Facilitate open discussion</div>
+                                    <div class="quiz-option">B) Make a decisive decision</div>
+                                    <div class="quiz-option">C) Seek consensus</div>
+                                    <div class="quiz-option">D) Delegate to experts</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="challenge-btn assessment-btn" onclick="startAssessment('leadership-style')">
+                            <i class="fas fa-clipboard-list"></i>
+                            Start Assessment
+                        </button>
+                    </div>
+
+                    <!-- Emotional Intelligence Quiz -->
+                    <div class="challenge-card assessment-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">💡</div>
+                            <div class="challenge-points">150 XP</div>
+                        </div>
+                        <h3>EQ Self-Assessment</h3>
+                        <p>Measure your emotional intelligence across self-awareness, empathy, and social skills.</p>
+                        
+                        <div class="challenge-meta">
+                            <span><i class="fas fa-clock"></i> 15 mins</span>
+                            <span><i class="fas fa-question"></i> 12 questions</span>
+                            <span><i class="fas fa-bolt"></i> Quiz</span>
+                        </div>
+                        
+                        <div class="assessment-preview">
+                            <div class="quiz-sample">
+                                <p><strong>Sample Question:</strong> When a team member is upset, I usually...</p>
+                                <div class="quiz-options">
+                                    <div class="quiz-option">A) Give them space to process</div>
+                                    <div class="quiz-option">B) Offer practical solutions</div>
+                                    <div class="quiz-option">C) Listen empathetically</div>
+                                    <div class="quiz-option">D) Redirect to positive focus</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="challenge-btn assessment-btn" onclick="startAssessment('eq-quiz')">
+                            <i class="fas fa-brain"></i>
+                            Start EQ Quiz
+                        </button>
+                    </div>
+
+                    <!-- Communication Skills Test -->
+                    <div class="challenge-card assessment-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">🎯</div>
+                            <div class="challenge-points">180 XP</div>
+                        </div>
+                        <h3>Communication Effectiveness</h3>
+                        <p>Evaluate your communication skills and identify areas for improvement.</p>
+                        
+                        <div class="challenge-meta">
+                            <span><i class="fas fa-clock"></i> 25 mins</span>
+                            <span><i class="fas fa-question"></i> 20 questions</span>
+                            <span><i class="fas fa-bolt"></i> Test</span>
+                        </div>
+                        
+                        <div class="assessment-preview">
+                            <div class="quiz-sample">
+                                <p><strong>Sample Question:</strong> In important meetings, I typically...</p>
+                                <div class="quiz-options">
+                                    <div class="quiz-option">A) Speak early and often</div>
+                                    <div class="quiz-option">B) Listen carefully before speaking</div>
+                                    <div class="quiz-option">C) Focus on building consensus</div>
+                                    <div class="quiz-option">D) Present data and facts</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="challenge-btn assessment-btn" onclick="startAssessment('communication-test')">
+                            <i class="fas fa-comments"></i>
+                            Start Communication Test
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practical Challenges -->
+            <div class="challenge-category" style="margin-top: 50px;">
+                <h3 class="category-title"><i class="fas fa-tasks gold"></i> Practical Leadership Challenges</h3>
+                <div class="challenges-grid">
+                    <!-- Active Listening Challenge -->
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">👂</div>
+                            <div class="challenge-points">100 XP</div>
+                        </div>
+                        <h3>Active Listening Practice</h3>
+                        <p>Practice active listening skills in real conversations and reflect on your improvements.</p>
+                        
+                        <div class="challenge-meta">
+                            <span><i class="fas fa-clock"></i> 15 mins</span>
+                            <span><i class="fas fa-bolt"></i> Easy</span>
+                        </div>
+                        
+                        <div class="challenge-tags">
+                            <span class="tag">Communication</span>
+                            <span class="tag">Empathy</span>
+                            <span class="tag">Practice</span>
+                        </div>
+                        
+                        <div class="reflection-section">
+                            <h4>Reflection Question:</h4>
+                            <textarea class="reflection-input" placeholder="What did you notice about your listening habits? What will you do differently?"></textarea>
+                        </div>
+                        
+                        <button class="challenge-btn" onclick="startChallenge(1)">
+                            <i class="fas fa-play"></i>
+                            Start Challenge
+                        </button>
+                    </div>
+
+                    <!-- Feedback Delivery -->
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">💬</div>
+                            <div class="challenge-points">150 XP</div>
+                        </div>
+                        <h3>Constructive Feedback</h3>
+                        <p>Practice delivering constructive feedback using the SBI (Situation-Behavior-Impact) model.</p>
+                        
+                        <div class="challenge-meta">
+                            <span><i class="fas fa-clock"></i> 30 mins</span>
+                            <span><i class="fas fa-bolt"></i> Medium</span>
+                        </div>
+                        
+                        <div class="challenge-tags">
+                            <span class="tag">Feedback</span>
+                            <span class="tag">Communication</span>
+                            <span class="tag">Development</span>
+                        </div>
+                        
+                        <div class="reflection-section">
+                            <h4>Reflection Question:</h4>
+                            <textarea class="reflection-input" placeholder="How did the SBI model help structure your feedback? What was the response?"></textarea>
+                        </div>
+                        
+                        <button class="challenge-btn" onclick="startChallenge(2)">
+                            <i class="fas fa-play"></i>
+                            Start Challenge
+                        </button>
+                    </div>
+
+                    <!-- Meeting Facilitation -->
+                    <div class="challenge-card">
+                        <div class="challenge-header">
+                            <div class="challenge-icon">🤝</div>
+                            <div class="challenge-points">200 XP</div>
+                        </div>
+                        <h3>Meeting Facilitation</h3>
+                        <p>Facilitate a team meeting ensuring equal participation and clear action items.</p>
+                        
+                        <div class="challenge-meta">
+                            <span><i class="fas fa-clock"></i> 45 mins</span>
+                            <span><i class="fas fa-bolt"></i> Hard</span>
+                        </div>
+                        
+                        <div class="challenge-tags">
+                            <span class="tag">Facilitation</span>
+                            <span class="tag">Teamwork</span>
+                            <span class="tag">Organization</span>
+                        </div>
+                        
+                        <div class="reflection-section">
+                            <h4>Reflection Question:</h4>
+                            <textarea class="reflection-input" placeholder="What facilitation techniques worked well? How can you improve meeting effectiveness?"></textarea>
+                        </div>
+                        
+                        <button class="challenge-btn" onclick="startChallenge(3)">
+                            <i class="fas fa-play"></i>
+                            Start Challenge
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROGRESS SECTION -->
+    <section id="progress" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h1>Your Progress</h1>
+                <p>Track your leadership journey, celebrate achievements, and set new goals.</p>
+            </div>
+
+            <!-- Progress Stats -->
+            <div class="progress-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Leadership Level</h3>
+                        <div class="stat-number" id="progressLevel">1</div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 10%"></div>
+                        </div>
+                        <div class="level-progress">50/500 XP to next level</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Courses Completed</h3>
+                        <div class="stat-number" id="progressCourses">0</div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 30%"></div>
+                        </div>
+                        <div class="level-progress">1/12 courses completed</div>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Total XP Earned</h3>
+                        <div class="stat-number" id="progressXP">50</div>
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 10%"></div>
+                        </div>
+                        <div class="level-progress">50/500 XP</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Completion -->
+            <div class="completion-section">
+                <h3><i class="fas fa-check-circle gold"></i> Course Completion</h3>
+                <div class="completion-list">
+                    <div class="completion-item">
+                        <div class="completion-info">
+                            <h4>Leadership Fundamentals</h4>
+                            <p>Master essential leadership principles • 30% complete</p>
+                        </div>
+                        <label class="completion-toggle">
+                            <input type="checkbox" onchange="toggleCompletion(this, 'leadership-fundamentals')">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="completion-item">
+                        <div class="completion-info">
+                            <h4>Strategic Communication</h4>
+                            <p>Learn impactful communication • 0% complete</p>
+                        </div>
+                        <label class="completion-toggle">
+                            <input type="checkbox" onchange="toggleCompletion(this, 'strategic-communication')">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="completion-item">
+                        <div class="completion-info">
+                            <h4>Emotional Intelligence</h4>
+                            <p>Develop self-awareness and empathy • 0% complete</p>
+                        </div>
+                        <label class="completion-toggle">
+                            <input type="checkbox" onchange="toggleCompletion(this, 'emotional-intelligence')">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="achievements-section">
+                <h2><i class="fas fa-award gold"></i> Your Achievements</h2>
+                <div class="achievements-grid">
+                    <div class="achievement earned">
+                        <div class="achievement-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="achievement-content">
+                            <h4>First Steps</h4>
+                            <p>Complete your first leadership activity</p>
+                        </div>
+                        <div class="achievement-badge">🏆</div>
+                    </div>
+                    
+                    <div class="achievement locked">
+                        <div class="achievement-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="achievement-content">
+                            <h4>Communication Pro</h4>
+                            <p>Complete 5 communication challenges</p>
+                        </div>
+                        <div class="achievement-badge">🔒</div>
+                    </div>
+                    
+                    <div class="achievement locked">
+                        <div class="achievement-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="achievement-content">
+                            <h4>Team Leader</h4>
+                            <p>Lead 3 successful team challenges</p>
+                        </div>
+                        <div class="achievement-badge">🔒</div>
+                    </div>
+
+                    <div class="achievement locked">
+                        <div class="achievement-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="achievement-content">
+                            <h4>Strategic Thinker</h4>
+                            <p>Complete all strategic decision-making assessments</p>
+                        </div>
+                        <div class="achievement-badge">🔒</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VIDEO MODAL -->
+    <div id="videoModal" class="modal video-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeVideoModal()">&times;</span>
+            <div class="video-container">
+                <iframe id="videoFrame" width="100%" height="100%" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ASSESSMENT MODAL -->
+    <div id="assessmentModal" class="modal">
+        <div class="modal-content assessment-modal-content">
+            <span class="close-modal" onclick="closeAssessmentModal()">&times;</span>
+            <div class="assessment-header">
+                <h2 id="assessmentTitle">Leadership Assessment</h2>
+                <div class="assessment-progress">
+                    <span>Question <span id="currentQuestion">1</span> of <span id="totalQuestions">10</span></span>
+                    <div class="progress-bar">
+                        <div class="progress" id="assessmentProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="assessment-body">
+                <div id="assessmentContent">
+                    <!-- Assessment questions will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="assessment-footer">
+                <button id="prevQuestion" class="assessment-nav-btn" onclick="prevQuestion()" disabled>
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button id="nextQuestion" class="assessment-nav-btn" onclick="nextQuestion()">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+                <button id="submitAssessment" class="assessment-submit-btn" onclick="submitAssessment()" style="display: none;">
+                    <i class="fas fa-paper-plane"></i> Submit Assessment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
