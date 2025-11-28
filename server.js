@@ -1,10 +1,13 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const app = express();
 
 const PORT = process.env.PORT || 3000;
 const DB_PATH = path.join(__dirname, 'db.json');
+const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
 
 app.use(express.json());
 
@@ -37,8 +40,10 @@ app.post('/api/auth/signup', (req, res) => {
   const db = loadDB();
   if (db.users[email]) return res.status(400).json({ error: 'User already exists' });
 
-  // Demo: store password in plain text (NOT for production)
-  db.users[email] = { name, email, password, createdAt: new Date().toISOString() };
+  // Hash password before storing
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(password, salt);
+  db.users[email] = { name, email, passwordHash: hash, createdAt: new Date().toISOString() };
   // Ensure progress object exists for new user
   if (!db.progress) db.progress = {};
   const initialProgress = {
@@ -55,7 +60,9 @@ app.post('/api/auth/signup', (req, res) => {
   db.progress[email] = initialProgress;
   saveDB(db);
 
-  return res.json({ success: true, user: { name, email }, token: email });
+  // Issue JWT token
+  const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '30d' });
+  return res.json({ success: true, user: { name, email }, token });
 });
 
 // AUTH: Login
@@ -66,10 +73,12 @@ app.post('/api/auth/login', (req, res) => {
   const db = loadDB();
   const user = db.users[email];
   if (!user) return res.status(400).json({ error: 'User not found' });
-  // Demo check
-  if (user.password && user.password !== password) return res.status(401).json({ error: 'Invalid credentials' });
+  // Verify password using bcrypt
+  const valid = user.passwordHash ? bcrypt.compareSync(password, user.passwordHash) : false;
+  if (!valid) return res.status(401).json({ error: 'Invalid credentials' });
 
-  return res.json({ success: true, user: { name: user.name, email: user.email }, token: email });
+  const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: '30d' });
+  return res.json({ success: true, user: { name: user.name, email: user.email }, token });
 });
 
 // Courses list
@@ -88,7 +97,15 @@ app.get('/api/courses/:id', (req, res) => {
 // Progress endpoints (identify user by token sent in Authorization header or ?email=)
 function getUserFromReq(req) {
   const auth = req.headers.authorization || '';
-  if (auth.startsWith('Bearer ')) return auth.slice(7);
+  if (auth.startsWith('Bearer ')) {
+    const token = auth.slice(7);
+    try {
+      const payload = jwt.verify(token, JWT_SECRET);
+      return payload.email;
+    } catch (err) {
+      return null;
+    }
+  }
   if (req.query && req.query.email) return req.query.email;
   return null;
 }

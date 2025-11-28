@@ -403,7 +403,7 @@ function handleLogin(e) {
             return;
         }
         const user = body.user || {};
-        localStorage.setItem('authToken', body.token || 'demo-token');
+        localStorage.setItem('authToken', body.token || '');
         localStorage.setItem('userName', user.name || (user.email || email).split('@')[0]);
         localStorage.setItem('userEmail', user.email || email);
         showNotification('Welcome back! 🎉', 'success');
