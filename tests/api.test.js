@@ -1,5 +1,3 @@
-const fetch = require('node-fetch');
-
 const BASE = 'http://localhost:3000';
 
 async function run() {
