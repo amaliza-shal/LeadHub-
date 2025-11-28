@@ -189,6 +189,58 @@ function initializeApp() {
     if (window.location.protocol.indexOf('http') === 0) {
         checkServer();
     }
+    // Load courses from backend to populate the courses grid
+    loadCourses();
+}
+
+// Load courses from backend and render into .courses-grid
+function loadCourses() {
+    fetch('/api/courses')
+        .then(res => res.json())
+        .then(courses => {
+            const grid = document.querySelector('.courses-grid');
+            if (!grid) return;
+
+            // Render simple course cards
+            grid.innerHTML = courses.map(course => `
+                <div class="course-card">
+                    <div class="course-header">
+                        <div class="course-icon">👑</div>
+                        <span class="course-badge beginner">Core</span>
+                    </div>
+                    <h3>${escapeHtml(course.title)}</h3>
+                    <p>${escapeHtml(course.description || '')}</p>
+                    <div class="course-meta">
+                        <span><i class="fas fa-clock"></i> ${escapeHtml(course.duration || '')}</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 0%"></div>
+                        </div>
+                        <span>Not started</span>
+                    </div>
+                    <button class="course-btn" onclick="startCourse('${course.id}')">
+                        <i class="fas fa-play"></i>
+                        Start Learning
+                    </button>
+                </div>
+            `).join('');
+
+            // Update any progress bars from local progress store
+            updateCourseProgressBars();
+        })
+        .catch(err => {
+            console.warn('Failed to load courses:', err);
+            showNotification('Unable to load courses from backend', 'error');
+        });
+}
+
+// Small helper to escape HTML when injecting content
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/[&<>"'`]/g, s => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;'
+    }[s]));
 }
 
 // Enhanced setupEventListeners
