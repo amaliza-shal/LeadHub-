@@ -228,6 +228,10 @@ function loadCourses() {
 
             // Update any progress bars from local progress store
             updateCourseProgressBars();
+            // Update in-memory courseData map so getCourseName/startCourse can use server titles
+            courses.forEach(c => {
+                courseData[c.id] = c.title;
+            });
         })
         .catch(err => {
             console.warn('Failed to load courses:', err);
@@ -379,6 +383,22 @@ function handleLogin(e) {
     .then(res => res.json().then(body => ({ ok: res.ok, body })))
     .then(({ ok, body }) => {
         if (!ok) {
+            // If user not found, prefill signup and show signup form
+            if (body && body.error && body.error.toLowerCase().includes('not found')) {
+                showNotification('No account found — please create one', 'info');
+                // Prefill signup email and open signup form
+                const signupEmail = document.getElementById('signupEmail');
+                const signupName = document.getElementById('signupName');
+                if (signupEmail) signupEmail.value = email;
+                if (signupName) signupName.value = email.split('@')[0];
+                // Switch toggle buttons UI if present
+                document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+                const toggleBtns = document.querySelectorAll('.toggle-btn');
+                if (toggleBtns && toggleBtns[1]) toggleBtns[1].classList.add('active');
+                document.getElementById('loginForm').classList.remove('active');
+                document.getElementById('signupForm').classList.add('active');
+                return;
+            }
             showNotification(body.error || 'Login failed', 'error');
             return;
         }
@@ -387,6 +407,8 @@ function handleLogin(e) {
         localStorage.setItem('userName', user.name || (user.email || email).split('@')[0]);
         localStorage.setItem('userEmail', user.email || email);
         showNotification('Welcome back! 🎉', 'success');
+        // Load user progress from server then show home
+        initializeProgress();
         showSection('home');
     })
     .catch(err => {
@@ -438,7 +460,28 @@ function handleSignup(e) {
         localStorage.setItem('userName', user.name || user.email.split('@')[0]);
         localStorage.setItem('userEmail', user.email);
         showNotification('Account created successfully! 🎉', 'success');
-        showSection('home');
+        // Initialize server-side progress for new user and fetch it
+        const initialProgress = {
+            courses: {},
+            challenges: {},
+            assessments: {},
+            xp: 50,
+            level: 1
+        };
+        // Initialize courses list keys from loaded courseData
+        Object.keys(courseData).forEach(cid => {
+            initialProgress.courses[cid] = { completed: false, progress: cid === 'leadership-fundamentals' ? 30 : 0 };
+        });
+
+        fetch('/api/progress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
+            body: JSON.stringify(initialProgress)
+        }).finally(() => {
+            // Fetch progress into localStorage and show home
+            initializeProgress();
+            showSection('home');
+        });
     })
     .catch(err => {
         showNotification('Network error: ' + err.message, 'error');
@@ -689,21 +732,37 @@ function closeAssessmentModal() {
 // Enhanced Course Management
 function startCourse(courseId) {
     const courseName = getCourseName(courseId);
-    showNotification(`🚀 Starting "${courseName}" - Begin your leadership journey!`, 'info');
-    
-    // Enhanced course start with progress simulation
-    setTimeout(() => {
-        updateCourseProgress(courseId, 25);
-        showNotification(`📚 Making great progress in "${courseName}"!`, 'success');
-        
-        // Suggest relevant assessment after some progress
-        setTimeout(() => {
-            const relevantAssessment = getRelevantAssessment(courseId);
-            if (relevantAssessment) {
-                showNotification(`💡 Ready to test your skills? Try the ${assessmentData[relevantAssessment].title}`, 'info');
+    showNotification(`🚀 Opening "${courseName}"...`, 'info');
+
+    // Fetch course details from server (may include video URL)
+    fetch(`/api/courses/${encodeURIComponent(courseId)}`)
+        .then(res => res.json())
+        .then(course => {
+            // If there's a video URL, open it in the modal
+            if (course && course.videoUrl) {
+                openVideoModal(course.videoUrl);
             }
-        }, 3000);
-    }, 2000);
+
+            // Simulate progress update when user starts a course
+            setTimeout(() => {
+                updateCourseProgress(courseId, 25);
+                showNotification(`📚 Progress saved for "${courseName}"`, 'success');
+
+                // Suggest relevant assessment after some progress
+                setTimeout(() => {
+                    const relevantAssessment = getRelevantAssessment(courseId);
+                    if (relevantAssessment) {
+                        showNotification(`💡 Ready to test your skills? Try the ${assessmentData[relevantAssessment].title}`, 'info');
+                    }
+                }, 2000);
+            }, 1200);
+        })
+        .catch(err => {
+            console.warn('Failed to fetch course details:', err);
+            // fallback: still update progress locally
+            updateCourseProgress(courseId, 25);
+            showNotification(`📚 Started "${courseName}" (offline)`, 'info');
+        });
 }
 
 function getRelevantAssessment(courseId) {
