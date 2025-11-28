@@ -5,6 +5,19 @@
       "email": "testuser@example.com",
       "password": "password123",
       "createdAt": "2025-11-28T07:03:44.280Z"
+    },
+    "autotest@example.com": {
+      "name": "Auto Test",
+      "email": "autotest@example.com",
+      "password": "test1234",
+      "createdAt": "2025-11-28T07:13:25.516Z"
+    },
+    "amalizashalom22@gmail.com": {
+      "name": "Amaliza Shalom",
+      "email": "amalizashalom22@gmail.com",
+      "passwordHash": "$2a$10$iJWI6teMvquOEfZi3n9WwuH/r4IVrMj.D2pQu9nBkjoiR1Se3Y1Y6",
+      "isAdmin": true,
+      "createdAt": "2025-11-28T12:02:13.865Z"
     }
   },
   "progress": {
@@ -19,6 +32,46 @@
       "assessments": {},
       "xp": 350,
       "level": 1
+    },
+    "autotest@example.com": {
+      "courses": {
+        "leadership-fundamentals": {
+          "completed": false,
+          "progress": 30
+        },
+        "strategic-communication": {
+          "completed": false,
+          "progress": 0
+        },
+        "emotional-intelligence": {
+          "completed": false,
+          "progress": 0
+        }
+      },
+      "challenges": {},
+      "assessments": {},
+      "xp": 50,
+      "level": 1
+    },
+    "amalizashalom22@gmail.com": {
+      "courses": {
+        "leadership-fundamentals": {
+          "completed": false,
+          "progress": 30
+        },
+        "strategic-communication": {
+          "completed": false,
+          "progress": 0
+        },
+        "emotional-intelligence": {
+          "completed": false,
+          "progress": 0
+        }
+      },
+      "challenges": {},
+      "assessments": {},
+      "xp": 50,
+      "level": 1
     }
   },
   "courses": [
@@ -27,21 +80,69 @@
       "title": "Leadership Fundamentals",
       "description": "Master the essential principles of effective leadership and build your leadership foundation.",
       "duration": "6 hours",
-      "videoUrl": "https://www.youtube.com/embed/6T9TYZ9UuU4"
+      "videoUrl": "https://www.youtube.com/embed/6T9TYZ9U4",
+      "assessmentId": "leadership-style",
+      "content": [
+        {
+          "title": "What is Leadership?",
+          "body": "<p>Leadership is the ability to influence and guide others toward a common goal. In this lesson we explore the difference between authority and leadership, and discuss the attributes of effective leaders.</p>",
+          "resources": [
+            { "title": "Article: Leadership vs Management", "url": "https://example.com/leadership-vs-management" }
+          ],
+          "videoUrl": "https://www.youtube.com/embed/6T9TYZ9U4"
+        },
+        {
+          "title": "Core Leadership Principles",
+          "body": "<p>This lesson covers principles such as integrity, accountability, empathy, and vision-setting. Practical examples and reflection prompts are included.</p>",
+          "resources": [ { "title": "Workbook: Leadership Principles", "url": "https://example.com/leadership-workbook" } ]
+        },
+        {
+          "title": "Leading Teams Effectively",
+          "body": "<p>Techniques for building trust, fostering collaboration, and facilitating productive meetings. Includes frameworks for decision-making and delegation.</p>",
+          "resources": []
+        }
+      ]
     },
     {
       "id": "strategic-communication",
       "title": "Strategic Communication",
       "description": "Learn to communicate with clarity, confidence, and impact in any situation.",
       "duration": "5 hours",
-      "videoUrl": "https://www.youtube.com/embed/HT3SC5xK9bQ"
+      "videoUrl": "https://www.youtube.com/embed/HT3SC5xK9bQ",
+      "assessmentId": "communication-test",
+      "content": [
+        {
+          "title": "The Fundamentals of Clear Messaging",
+          "body": "<p>How to structure a message for different audiences, the importance of purpose-first communication, and practical templates.</p>",
+          "resources": [ { "title": "Slide Deck: Clear Messaging", "url": "https://example.com/clear-messaging" } ],
+          "videoUrl": "https://www.youtube.com/embed/HT3SC5xK9bQ"
+        },
+        {
+          "title": "Active Listening & Feedback",
+          "body": "<p>Explore active listening techniques and delivering feedback using the SBI model. Exercises included.</p>",
+          "resources": []
+        }
+      ]
     },
     {
       "id": "emotional-intelligence",
       "title": "Emotional Intelligence",
       "description": "Develop self-awareness, empathy, and social skills for better leadership relationships.",
       "duration": "4 hours",
-      "videoUrl": "https://www.youtube.com/embed/Y7m9eNoB3NU"
+      "videoUrl": "https://www.youtube.com/embed/Y7m9eNoB3NU",
+      "assessmentId": "eq-quiz",
+      "content": [
+        {
+          "title": "Self-Awareness",
+          "body": "<p>Understand your emotional triggers, strengths, and areas for growth. This lesson includes reflective prompts and journaling exercises.</p>",
+          "resources": []
+        },
+        {
+          "title": "Empathy & Social Skills",
+          "body": "<p>Practice perspective-taking, giving supportive feedback, and fostering inclusive team conversations.</p>",
+          "resources": []
+        }
+      ]
     }
   ]
 }
