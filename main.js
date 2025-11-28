@@ -362,6 +362,10 @@ function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
+    const loginErrorEl = document.getElementById('loginError');
+    const loginBtn = document.querySelector('#loginForm .auth-btn');
+    if (loginErrorEl) { loginErrorEl.style.display = 'none'; loginErrorEl.textContent = ''; }
+    if (loginBtn) loginBtn.disabled = true;
     
     if (!validateEmail(email)) {
         showNotification('Please enter a valid email address', 'error');
@@ -383,36 +387,36 @@ function handleLogin(e) {
     .then(res => res.json().then(body => ({ ok: res.ok, body })))
     .then(({ ok, body }) => {
         if (!ok) {
-            // If user not found, prefill signup and show signup form
-            if (body && body.error && body.error.toLowerCase().includes('not found')) {
+            // Show inline error if present
+            const msg = (body && body.error) ? body.error : 'Login failed';
+            if (loginErrorEl) { loginErrorEl.textContent = msg; loginErrorEl.style.display = 'block'; }
+
+            // If user not found, show signup form with prefilled values
+            if (msg.toLowerCase().includes('not found')) {
                 showNotification('No account found — please create one', 'info');
-                // Prefill signup email and open signup form
                 const signupEmail = document.getElementById('signupEmail');
                 const signupName = document.getElementById('signupName');
                 if (signupEmail) signupEmail.value = email;
                 if (signupName) signupName.value = email.split('@')[0];
-                // Switch toggle buttons UI if present
-                document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
-                const toggleBtns = document.querySelectorAll('.toggle-btn');
-                if (toggleBtns && toggleBtns[1]) toggleBtns[1].classList.add('active');
-                document.getElementById('loginForm').classList.remove('active');
-                document.getElementById('signupForm').classList.add('active');
-                return;
+                showAuthForm('signup');
             }
-            showNotification(body.error || 'Login failed', 'error');
+            if (loginBtn) loginBtn.disabled = false;
             return;
         }
         const user = body.user || {};
-        localStorage.setItem('authToken', body.token || '');
+        if (body.token) localStorage.setItem('authToken', body.token);
         localStorage.setItem('userName', user.name || (user.email || email).split('@')[0]);
         localStorage.setItem('userEmail', user.email || email);
         showNotification('Welcome back! 🎉', 'success');
         // Load user progress from server then show home
         initializeProgress();
         showSection('home');
+        if (loginBtn) loginBtn.disabled = false;
     })
     .catch(err => {
+        if (loginErrorEl) { loginErrorEl.textContent = 'Network error: ' + err.message; loginErrorEl.style.display = 'block'; }
         showNotification('Network error: ' + err.message, 'error');
+        if (loginBtn) loginBtn.disabled = false;
     });
 }
 
@@ -422,6 +426,10 @@ function handleSignup(e) {
     const email = document.getElementById('signupEmail').value;
     const password = document.getElementById('signupPassword').value;
     const confirmPassword = document.getElementById('signupConfirmPassword').value;
+    const signupErrorEl = document.getElementById('signupError');
+    const signupBtn = document.querySelector('#signupForm .auth-btn');
+    if (signupErrorEl) { signupErrorEl.style.display = 'none'; signupErrorEl.textContent = ''; }
+    if (signupBtn) signupBtn.disabled = true;
     
     if (!name || !email || !password) {
         showNotification('Please fill in all fields', 'error');
@@ -452,39 +460,26 @@ function handleSignup(e) {
     .then(res => res.json().then(body => ({ ok: res.ok, body })))
     .then(({ ok, body }) => {
         if (!ok) {
-            showNotification(body.error || 'Signup failed', 'error');
+            const msg = (body && body.error) ? body.error : 'Signup failed';
+            if (signupErrorEl) { signupErrorEl.textContent = msg; signupErrorEl.style.display = 'block'; }
+            showNotification(msg, 'error');
+            if (signupBtn) signupBtn.disabled = false;
             return;
         }
         const user = body.user || {};
-        localStorage.setItem('authToken', body.token || 'demo-token');
+        if (body.token) localStorage.setItem('authToken', body.token);
         localStorage.setItem('userName', user.name || user.email.split('@')[0]);
         localStorage.setItem('userEmail', user.email);
         showNotification('Account created successfully! 🎉', 'success');
-        // Initialize server-side progress for new user and fetch it
-        const initialProgress = {
-            courses: {},
-            challenges: {},
-            assessments: {},
-            xp: 50,
-            level: 1
-        };
-        // Initialize courses list keys from loaded courseData
-        Object.keys(courseData).forEach(cid => {
-            initialProgress.courses[cid] = { completed: false, progress: cid === 'leadership-fundamentals' ? 30 : 0 };
-        });
-
-        fetch('/api/progress', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` },
-            body: JSON.stringify(initialProgress)
-        }).finally(() => {
-            // Fetch progress into localStorage and show home
-            initializeProgress();
-            showSection('home');
-        });
+        // No need to manually POST initial progress — server created it. Fetch progress
+        initializeProgress();
+        showSection('home');
+        if (signupBtn) signupBtn.disabled = false;
     })
     .catch(err => {
+        if (signupErrorEl) { signupErrorEl.textContent = 'Network error: ' + err.message; signupErrorEl.style.display = 'block'; }
         showNotification('Network error: ' + err.message, 'error');
+        if (signupBtn) signupBtn.disabled = false;
     });
 }
 
