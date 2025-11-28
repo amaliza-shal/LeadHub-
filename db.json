@@ -1,6 +1,26 @@
 {
-  "users": {},
-  "progress": {},
+  "users": {
+    "testuser@example.com": {
+      "name": "Test User",
+      "email": "testuser@example.com",
+      "password": "password123",
+      "createdAt": "2025-11-28T07:03:44.280Z"
+    }
+  },
+  "progress": {
+    "testuser@example.com": {
+      "courses": {
+        "leadership-fundamentals": {
+          "completed": true,
+          "progress": 100
+        }
+      },
+      "challenges": {},
+      "assessments": {},
+      "xp": 350,
+      "level": 1
+    }
+  },
   "courses": [
     {
       "id": "leadership-fundamentals",

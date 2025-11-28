@@ -13,6 +13,7 @@
     --accent-dark: #D4AF37;
     --gray: #6B7280;
     --dark: #000000;
+    --light: #ffffff;
     --success: #10B981;
     --warning: #F59E0B;
     --danger: #EF4444;
@@ -32,14 +33,11 @@ body {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background-image: url(Images.png/Lead\ hub\ background.png);
-    background: linear-gradient(135deg, 
-        rgba(102, 126, 234, 0.08) 0%, 
-        rgba(118, 75, 162, 0.08) 50%, 
-        rgba(255, 255, 255, 0.05) 100%);
-    background-image: 
-        radial-gradient(circle at 10% 20%, rgba(102, 126, 234, 0.05) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(118, 75, 162, 0.05) 0%, transparent 40%);
+    /* Use the background image with a subtle gradient overlay. Quotes handle spaces in filenames. */
+    background-image: linear-gradient(135deg, rgba(102,126,234,0.06), rgba(118,75,162,0.03)), url("Images.png/Lead hub background.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 /* Make content stand out */
