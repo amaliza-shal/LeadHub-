@@ -39,6 +39,20 @@ app.post('/api/auth/signup', (req, res) => {
 
   // Demo: store password in plain text (NOT for production)
   db.users[email] = { name, email, password, createdAt: new Date().toISOString() };
+  // Ensure progress object exists for new user
+  if (!db.progress) db.progress = {};
+  const initialProgress = {
+    courses: {},
+    challenges: {},
+    assessments: {},
+    xp: 50,
+    level: 1
+  };
+  // initialize courses keys from db.courses
+  (db.courses || []).forEach(c => {
+    initialProgress.courses[c.id] = { completed: false, progress: c.id === 'leadership-fundamentals' ? 30 : 0 };
+  });
+  db.progress[email] = initialProgress;
   saveDB(db);
 
   return res.json({ success: true, user: { name, email }, token: email });

@@ -1153,6 +1153,29 @@ function checkServer() {
         });
 }
 
+// Show login or signup form in the auth card
+function showAuthForm(mode) {
+    const loginForm = document.getElementById('loginForm');
+    const signupForm = document.getElementById('signupForm');
+    const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+    if (mode === 'signup') {
+        if (loginForm) loginForm.classList.remove('active');
+        if (signupForm) signupForm.classList.add('active');
+        if (toggleBtns && toggleBtns.length >= 2) {
+            toggleBtns.forEach(btn => btn.classList.remove('active'));
+            toggleBtns[1].classList.add('active');
+        }
+    } else {
+        if (signupForm) signupForm.classList.remove('active');
+        if (loginForm) loginForm.classList.add('active');
+        if (toggleBtns && toggleBtns.length >= 1) {
+            toggleBtns.forEach(btn => btn.classList.remove('active'));
+            toggleBtns[0].classList.add('active');
+        }
+    }
+}
+
 // Open video modal with a given embed URL
 function openVideoModal(embedUrl) {
     const videoModal = document.getElementById('videoModal');
