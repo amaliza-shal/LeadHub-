@@ -1,0 +1,27 @@
+{
+  "users": {},
+  "progress": {},
+  "courses": [
+    {
+      "id": "leadership-fundamentals",
+      "title": "Leadership Fundamentals",
+      "description": "Master the essential principles of effective leadership and build your leadership foundation.",
+      "duration": "6 hours",
+      "videoUrl": "https://www.youtube.com/embed/6T9TYZ9UuU4"
+    },
+    {
+      "id": "strategic-communication",
+      "title": "Strategic Communication",
+      "description": "Learn to communicate with clarity, confidence, and impact in any situation.",
+      "duration": "5 hours",
+      "videoUrl": "https://www.youtube.com/embed/HT3SC5xK9bQ"
+    },
+    {
+      "id": "emotional-intelligence",
+      "title": "Emotional Intelligence",
+      "description": "Develop self-awareness, empathy, and social skills for better leadership relationships.",
+      "duration": "4 hours",
+      "videoUrl": "https://www.youtube.com/embed/Y7m9eNoB3NU"
+    }
+  ]
+}

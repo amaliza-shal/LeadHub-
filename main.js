@@ -721,6 +721,33 @@ function getCourseName(courseId) {
 
 // Enhanced Progress Management
 function initializeProgress() {
+    const token = localStorage.getItem('authToken');
+
+    if (token) {
+        // Fetch progress from server for authenticated users
+        fetch(`/api/progress`, { headers: { 'Authorization': `Bearer ${token}` } })
+            .then(res => res.json().then(body => ({ ok: res.ok, body })))
+            .then(({ ok, body }) => {
+                if (ok) {
+                    localStorage.setItem('userProgress', JSON.stringify(body));
+                } else {
+                    // Fallback initialization if server returns error
+                    initializeLocalProgress();
+                }
+                updateProgressDisplay();
+            })
+            .catch(() => {
+                // If server unreachable, fallback to local
+                initializeLocalProgress();
+                updateProgressDisplay();
+            });
+    } else {
+        initializeLocalProgress();
+        updateProgressDisplay();
+    }
+}
+
+function initializeLocalProgress() {
     if (!localStorage.getItem('userProgress')) {
         const initialProgress = {
             courses: {},
@@ -730,7 +757,7 @@ function initializeProgress() {
             level: 1
         };
         
-        // Initialize all courses
+        // Initialize all courses from the currently loaded courseData
         Object.keys(courseData).forEach(courseId => {
             initialProgress.courses[courseId] = { 
                 completed: false, 
@@ -745,7 +772,6 @@ function initializeProgress() {
         
         localStorage.setItem('userProgress', JSON.stringify(initialProgress));
     }
-    updateProgressDisplay();
 }
 
 // Enhanced progress display
@@ -941,29 +967,55 @@ function celebrateCompletion() {
 
 function updateCourseProgress(courseId, progress) {
     const userProgress = JSON.parse(localStorage.getItem('userProgress'));
-    if (!userProgress || !userProgress.courses[courseId]) return;
-    
+    if (!userProgress) return;
+
+    if (!userProgress.courses) userProgress.courses = {};
+    if (!userProgress.courses[courseId]) userProgress.courses[courseId] = { completed: false, progress: 0 };
+
     userProgress.courses[courseId].progress = progress;
     if (progress >= 100) {
         userProgress.courses[courseId].completed = true;
-        userProgress.xp += 300;
+        userProgress.xp = (userProgress.xp || 0) + 300;
         showNotification('🎓 Course completed! +300 XP earned!', 'success');
     }
-    
+
+    // Save locally first
     localStorage.setItem('userProgress', JSON.stringify(userProgress));
     updateProgressDisplay();
+
+    // Also persist to server when logged in
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        fetch('/api/progress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(userProgress)
+        }).catch(err => console.warn('Failed to persist progress:', err));
+    }
 }
 
 function updateChallengeProgress(challengeId) {
     const userProgress = JSON.parse(localStorage.getItem('userProgress'));
-    if (!userProgress || !userProgress.challenges[challengeId]) return;
-    
+    if (!userProgress) return;
+    if (!userProgress.challenges) userProgress.challenges = {};
+    if (!userProgress.challenges[challengeId]) userProgress.challenges[challengeId] = { completed: false };
+
     userProgress.challenges[challengeId].completed = true;
-    userProgress.xp += 150;
+    userProgress.xp = (userProgress.xp || 0) + 150;
     userProgress.level = Math.floor(userProgress.xp / 500) + 1;
-    
+
     localStorage.setItem('userProgress', JSON.stringify(userProgress));
     updateProgressDisplay();
+
+    // Persist to server when logged in
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        fetch('/api/progress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(userProgress)
+        }).catch(err => console.warn('Failed to persist challenge progress:', err));
+    }
 }
 
 // New function to show more courses
@@ -1040,4 +1092,14 @@ function checkServer() {
             // Not intrusive: only show info when running from an http(s) origin
             showNotification('Running in static mode (no backend)', 'info');
         });
+}
+
+// Open video modal with a given embed URL
+function openVideoModal(embedUrl) {
+    const videoModal = document.getElementById('videoModal');
+    const videoFrame = document.getElementById('videoFrame');
+    if (!videoModal || !videoFrame) return;
+    videoFrame.src = embedUrl;
+    videoModal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
 }
