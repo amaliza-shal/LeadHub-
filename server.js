@@ -11,6 +11,21 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
 
 app.use(express.json());
 
+// Simple request logger
+app.use((req, res, next) => {
+  console.log(new Date().toISOString(), req.method, req.path);
+  next();
+});
+
+// Handle JSON parse errors from express.json()
+app.use((err, req, res, next) => {
+  if (err && err.type === 'entity.parse.failed') {
+    console.warn('Invalid JSON received:', err.message);
+    return res.status(400).json({ error: 'Invalid JSON payload' });
+  }
+  next(err);
+});
+
 function loadDB() {
   try {
     const raw = fs.readFileSync(DB_PATH, 'utf8');
@@ -135,4 +150,11 @@ app.post('/api/progress', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`LeadHub server running on http://localhost:${PORT}`);
+});
+
+// Global error handler to return JSON on unexpected errors
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err && err.stack ? err.stack : err);
+  if (res.headersSent) return next(err);
+  res.status(500).json({ error: 'Internal server error' });
 });
