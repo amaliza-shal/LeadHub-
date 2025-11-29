@@ -81,7 +81,15 @@ body {
     top: 0;
     width: 100%;
     z-index: 1000;
-}
+    .navbar {
+        background: rgba(229,231,235,0.95); /* light grey instead of blue */
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+        border-bottom: 2px solid var(--accent);
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+    }
 
 .nav-container {
     max-width: 1200px;
@@ -265,7 +273,13 @@ body {
     padding: 40px;
     margin-bottom: 40px;
     border: 2px solid var(--accent);
-}
+    .hero-section {
+        background: rgba(243,244,246,0.95) !important; /* softer grey */
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 40px;
+        border: 2px solid var(--accent);
+    }
 
 .hero-content {
     display: grid;
@@ -332,7 +346,19 @@ body {
     align-items: center;
     justify-content: center;
     background-image: url('Images.png/public-speaking-girl.jpg.png');
-}
+    .hero-image {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        border: 3px solid var(--accent);
+        background: linear-gradient(135deg, #e6e9ec, #d1d5db); /* grey gradient */
+        height: 400px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-image: url('Images.png/public-speaking-girl.jpg.png');
+    }
 
 .video-placeholder {
     width: 100%;
@@ -385,7 +411,16 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     text-align: center;
-}
+    .action-card {
+        background: rgba(243,244,246,0.92); /* grey instead of blue */
+        padding: 25px;
+        border-radius: 15px;
+        border: 1px solid #e5e7eb;
+        border-top: 3px solid var(--accent);
+        cursor: pointer;
+        transition: all 0.3s;
+        text-align: center;
+    }
 
 .action-card:hover {
     transform: translateY(-5px);

@@ -18,6 +18,12 @@
       "passwordHash": "$2a$10$iJWI6teMvquOEfZi3n9WwuH/r4IVrMj.D2pQu9nBkjoiR1Se3Y1Y6",
       "isAdmin": true,
       "createdAt": "2025-11-28T12:02:13.865Z"
+    },
+    "amalizashalom@gmail.com": {
+      "name": "amalizashalom",
+      "email": "amalizashalom@gmail.com",
+      "passwordHash": "$2a$10$FPbl2qACFdPPek/ECNaFV.2mj2x1BLIUIdqBpUsF6nqdYNLrOgt42",
+      "createdAt": "2025-11-29T18:09:33.568Z"
     }
   },
   "progress": {
@@ -72,6 +78,26 @@
       "assessments": {},
       "xp": 50,
       "level": 1
+    },
+    "amalizashalom@gmail.com": {
+      "courses": {
+        "leadership-fundamentals": {
+          "completed": false,
+          "progress": 30
+        },
+        "strategic-communication": {
+          "completed": false,
+          "progress": 0
+        },
+        "emotional-intelligence": {
+          "completed": false,
+          "progress": 0
+        }
+      },
+      "challenges": {},
+      "assessments": {},
+      "xp": 50,
+      "level": 1
     }
   },
   "courses": [
@@ -87,14 +113,22 @@
           "title": "What is Leadership?",
           "body": "<p>Leadership is the ability to influence and guide others toward a common goal. In this lesson we explore the difference between authority and leadership, and discuss the attributes of effective leaders.</p>",
           "resources": [
-            { "title": "Article: Leadership vs Management", "url": "https://example.com/leadership-vs-management" }
+            {
+              "title": "Article: Leadership vs Management",
+              "url": "https://example.com/leadership-vs-management"
+            }
           ],
           "videoUrl": "https://www.youtube.com/embed/6T9TYZ9U4"
         },
         {
           "title": "Core Leadership Principles",
           "body": "<p>This lesson covers principles such as integrity, accountability, empathy, and vision-setting. Practical examples and reflection prompts are included.</p>",
-          "resources": [ { "title": "Workbook: Leadership Principles", "url": "https://example.com/leadership-workbook" } ]
+          "resources": [
+            {
+              "title": "Workbook: Leadership Principles",
+              "url": "https://example.com/leadership-workbook"
+            }
+          ]
         },
         {
           "title": "Leading Teams Effectively",
@@ -114,7 +148,12 @@
         {
           "title": "The Fundamentals of Clear Messaging",
           "body": "<p>How to structure a message for different audiences, the importance of purpose-first communication, and practical templates.</p>",
-          "resources": [ { "title": "Slide Deck: Clear Messaging", "url": "https://example.com/clear-messaging" } ],
+          "resources": [
+            {
+              "title": "Slide Deck: Clear Messaging",
+              "url": "https://example.com/clear-messaging"
+            }
+          ],
           "videoUrl": "https://www.youtube.com/embed/HT3SC5xK9bQ"
         },
         {
@@ -142,6 +181,115 @@
           "body": "<p>Practice perspective-taking, giving supportive feedback, and fostering inclusive team conversations.</p>",
           "resources": []
         }
+      ]
+    }
+    ,
+    {
+      "id": "team-leadership",
+      "title": "Team Leadership Dynamics",
+      "description": "Build, motivate and lead high-performing teams using practical frameworks.",
+      "duration": "6 hours",
+      "videoUrl": "https://www.youtube.com/embed/rrkrvAUbU9Y",
+      "assessmentId": "team-leadership-assess",
+      "content": [
+        { "title": "Foundations of Team Leadership", "body": "<p>Roles, stages of team development, and setting norms for success.</p>", "resources": [] },
+        { "title": "Motivation & Delegation", "body": "<p>How to delegate effectively and motivate through purpose and recognition.</p>", "resources": [] }
+      ]
+    },
+    {
+      "id": "strategic-decision-making",
+      "title": "Strategic Decision Making",
+      "description": "Develop critical thinking and make better decisions under pressure.",
+      "duration": "5 hours",
+      "videoUrl": "https://www.youtube.com/embed/8bIys6JoEDw",
+      "assessmentId": "decision-sim",
+      "content": [
+        { "title": "Decision Frameworks", "body": "<p>Use practical frameworks to analyze options, risks, and trade-offs.</p>", "resources": [] },
+        { "title": "Scenario Planning", "body": "<p>Run simulations and prepare for uncertainty using scenario techniques.</p>", "resources": [] }
+      ]
+    },
+    {
+      "id": "conflict-resolution",
+      "title": "Conflict Resolution",
+      "description": "Master techniques to resolve conflicts constructively and maintain team harmony.",
+      "duration": "4 hours",
+      "videoUrl": "https://www.youtube.com/embed/55n9pH_A0O8",
+      "assessmentId": "conflict-roleplay",
+      "content": [
+        { "title": "Understanding Conflict", "body": "<p>Types of conflict and when to address them.</p>", "resources": [] },
+        { "title": "Mediation Skills", "body": "<p>Step-by-step mediation and de-escalation techniques.</p>", "resources": [] }
+      ]
+    },
+    {
+      "id": "public-speaking",
+      "title": "Public Speaking Excellence",
+      "description": "Gain confidence and presence for public speaking and presentations.",
+      "duration": "3 hours",
+      "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "assessmentId": "speaking-demo",
+      "content": [
+        { "title": "Structure & Storytelling", "body": "<p>Craft clear openings, core messages, and memorable closes.</p>", "resources": [] },
+        { "title": "Delivery & Presence", "body": "<p>Voice, pacing, body language and handling nerves.</p>", "resources": [] }
+      ]
+    },
+    {
+      "id": "time-management",
+      "title": "Strategic Time Management",
+      "description": "Prioritise work and lead with focus using proven time techniques.",
+      "duration": "2.5 hours",
+      "videoUrl": "https://www.youtube.com/embed/2Xc9gXyf2G4",
+      "assessmentId": "time-audit",
+      "content": [
+        { "title": "Prioritisation", "body": "<p>Identify high-impact tasks and reduce low-value work.</p>", "resources": [] },
+        { "title": "Planning Systems", "body": "<p>Use weekly and daily planning to protect focus time.</p>", "resources": [] }
+      ]
+    },
+    {
+      "id": "change-leadership",
+      "title": "Leading Organizational Change",
+      "description": "Guide teams through change with empathy and clarity.",
+      "duration": "4.5 hours",
+      "videoUrl": "https://www.youtube.com/embed/3f7hQ8Q0x5I",
+      "assessmentId": "change-plan",
+      "content": [
+        { "title": "Change Models", "body": "<p>Understand ADKAR, Kotter and practical steps for transformation.</p>", "resources": [] },
+        { "title": "Communicating Change", "body": "<p>How to create buy-in and reduce resistance.</p>", "resources": [] }
+      ]
+    },
+    {
+      "id": "mentoring",
+      "title": "Leadership Mentoring & Coaching",
+      "description": "Develop coaching habits that unlock team potential.",
+      "duration": "3.5 hours",
+      "videoUrl": "https://www.youtube.com/embed/7L6gx5UtJtQ",
+      "assessmentId": "mentoring-eval",
+      "content": [
+        { "title": "Coaching Conversations", "body": "<p>Use powerful questions and active listening to coach growth.</p>", "resources": [] },
+        { "title": "Setting Development Goals", "body": "<p>Design useful development plans and follow-ups.</p>", "resources": [] }
+      ]
+    },
+    {
+      "id": "innovation",
+      "title": "Leading Innovation & Creativity",
+      "description": "Build a culture that enables creative problem solving.",
+      "duration": "3 hours",
+      "videoUrl": "https://www.youtube.com/embed/9bZkp7q19f0",
+      "assessmentId": "innovation-lab",
+      "content": [
+        { "title": "Creative Techniques", "body": "<p>Design thinking, ideation, and rapid prototyping.</p>", "resources": [] },
+        { "title": "Scaling Ideas", "body": "<p>From pilot to adoption: practical steps to scale experiments.</p>", "resources": [] }
+      ]
+    },
+    {
+      "id": "ethics",
+      "title": "Ethical Leadership & Decision Making",
+      "description": "Make principled choices and create trust in teams.",
+      "duration": "2 hours",
+      "videoUrl": "https://www.youtube.com/embed/5qap5aO4i9A",
+      "assessmentId": "ethics-case",
+      "content": [
+        { "title": "Principles & Frameworks", "body": "<p>Frameworks for ethical decision-making and trade-offs.</p>", "resources": [] },
+        { "title": "Building Trust", "body": "<p>Practices for transparency, accountability and psychological safety.</p>", "resources": [] }
       ]
     }
   ]
