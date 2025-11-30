@@ -217,8 +217,21 @@ function loadCourses() {
             const grid = document.querySelector('.courses-grid');
             if (!grid) return;
 
-            // Render simple course cards
-            grid.innerHTML = courses.map(course => `
+            // If backend returned no courses, fall back to local defaults
+            if (!courses.length) {
+                showNotification('No courses returned from backend — loading local content', 'info');
+            }
+
+            const rendered = (courses.length ? courses : Object.keys(courseData).map(id => ({
+                id,
+                title: courseData[id],
+                description: id === 'strategic-communication' ? 'Learn to communicate with clarity and impact.' : id === 'emotional-intelligence' ? 'Develop self-awareness and empathy.' : 'Core leadership principles and practices.',
+                duration: id === 'leadership-fundamentals' ? '6 hours' : '4-5 hours',
+                videoUrl: id === 'leadership-fundamentals' ? 'https://www.youtube.com/embed/6T9TYZ9UuU4' : id === 'strategic-communication' ? 'https://www.youtube.com/embed/HT3SC5xK9bQ' : 'https://www.youtube.com/embed/Y7m9eNoB3NU',
+                assessmentId: id === 'leadership-fundamentals' ? 'leadership-style' : id === 'strategic-communication' ? 'communication-test' : id === 'emotional-intelligence' ? 'eq-quiz' : null
+            })));
+
+            grid.innerHTML = rendered.map(course => `
                 <div class="course-card">
                     <div class="course-header">
                         <div class="course-icon">👑</div>
@@ -235,23 +248,65 @@ function loadCourses() {
                         </div>
                         <span>Not started</span>
                     </div>
-                    <button class="course-btn" onclick="startCourse('${course.id}')">
-                        <i class="fas fa-play"></i>
-                        Start Learning
-                    </button>
+                    <div style="display:flex;gap:8px;margin-top:10px;">
+                        <button class="course-btn" onclick="startCourse('${course.id}')">
+                            <i class="fas fa-play"></i>
+                            Start Learning
+                        </button>
+                        ${course.assessmentId ? `<button class="course-btn" onclick="startAssessment('${course.assessmentId}')" style="background:linear-gradient(135deg,#10B981,#059669);">Take Assessment</button>` : ''}
+                    </div>
                 </div>
             `).join('');
 
             // Update any progress bars from local progress store
             updateCourseProgressBars();
             // Update in-memory courseData map so getCourseName/startCourse can use server titles
-            courses.forEach(c => {
+            (courses.length ? courses : rendered).forEach(c => {
                 courseData[c.id] = c.title;
             });
         })
         .catch(err => {
             console.warn('Failed to load courses:', err);
-            showNotification('Unable to load courses from backend', 'error');
+            // Fallback to local courseData if backend unreachable
+            const grid = document.querySelector('.courses-grid');
+            if (!grid) return;
+            const fallback = Object.keys(courseData).map(id => ({
+                id,
+                title: courseData[id],
+                description: id === 'strategic-communication' ? 'Learn to communicate with clarity and impact.' : id === 'emotional-intelligence' ? 'Develop self-awareness and empathy.' : 'Core leadership principles and practices.',
+                duration: id === 'leadership-fundamentals' ? '6 hours' : '4-5 hours',
+                videoUrl: id === 'leadership-fundamentals' ? 'https://www.youtube.com/embed/6T9TYZ9UuU4' : id === 'strategic-communication' ? 'https://www.youtube.com/embed/HT3SC5xK9bQ' : 'https://www.youtube.com/embed/Y7m9eNoB3NU',
+                assessmentId: id === 'leadership-fundamentals' ? 'leadership-style' : id === 'strategic-communication' ? 'communication-test' : id === 'emotional-intelligence' ? 'eq-quiz' : null
+            }));
+            grid.innerHTML = fallback.map(course => `
+                <div class="course-card">
+                    <div class="course-header">
+                        <div class="course-icon">👑</div>
+                        <span class="course-badge beginner">Core</span>
+                    </div>
+                    <h3>${escapeHtml(course.title)}</h3>
+                    <p>${escapeHtml(course.description || '')}</p>
+                    <div class="course-meta">
+                        <span><i class="fas fa-clock"></i> ${escapeHtml(course.duration || '')}</span>
+                    </div>
+                    <div class="course-progress">
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 0%"></div>
+                        </div>
+                        <span>Not started</span>
+                    </div>
+                    <div style="display:flex;gap:8px;margin-top:10px;">
+                        <button class="course-btn" onclick="startCourse('${course.id}')">
+                            <i class="fas fa-play"></i>
+                            Start Learning
+                        </button>
+                        ${course.assessmentId ? `<button class="course-btn" onclick="startAssessment('${course.assessmentId}')" style="background:linear-gradient(135deg,#10B981,#059669);">Take Assessment</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+
+            updateCourseProgressBars();
+            showNotification('Loaded local courses (offline)', 'info');
         });
 }
 
@@ -370,6 +425,50 @@ function showSection(sectionId) {
     // Update progress when showing progress section
     if (sectionId === 'progress') {
         updateProgressDisplay();
+    }
+    if (sectionId === 'admin') {
+        loadAdminDashboard();
+    }
+}
+
+// Admin dashboard: load all users' progress
+async function loadAdminDashboard() {
+    const adminEl = document.getElementById('adminContent');
+    if (!adminEl) return;
+    adminEl.innerHTML = '<div class="loading-spinner"></div>';
+
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        adminEl.innerHTML = '<p>Please log in as an admin to view this dashboard.</p>';
+        return;
+    }
+
+    try {
+        const { ok, body } = await safeFetchJSON('/api/admin/progress', { headers: { Authorization: `Bearer ${token}` } });
+        if (!ok) {
+            adminEl.innerHTML = `<p class="auth-error">${(body && body.error) || 'Unable to load admin data'}</p>`;
+            return;
+        }
+
+        const users = body.users || {};
+        const progress = body.progress || {};
+
+        // Build table
+        let html = '<table style="width:100%;border-collapse:collapse">';
+        html += '<thead><tr><th style="text-align:left;padding:8px;border-bottom:2px solid #e5e7eb">User</th><th style="text-align:left;padding:8px;border-bottom:2px solid #e5e7eb">Email</th><th style="text-align:left;padding:8px;border-bottom:2px solid #e5e7eb">XP</th><th style="text-align:left;padding:8px;border-bottom:2px solid #e5e7eb">Level</th><th style="text-align:left;padding:8px;border-bottom:2px solid #e5e7eb">Courses Progress</th></tr></thead>';
+        html += '<tbody>';
+
+        Object.keys(users).forEach(email => {
+            const u = users[email];
+            const p = progress[email] || { xp: 0, level: 1, courses: {} };
+            const coursesSummary = Object.entries(p.courses || {}).map(([cid, info]) => `${cid}: ${info.progress || 0}%`).join('<br>');
+            html += `<tr><td style="padding:8px;border-bottom:1px solid #f3f4f6">${escapeHtml(u.name || '')}</td><td style="padding:8px;border-bottom:1px solid #f3f4f6">${escapeHtml(email)}</td><td style="padding:8px;border-bottom:1px solid #f3f4f6">${p.xp || 0}</td><td style="padding:8px;border-bottom:1px solid #f3f4f6">${p.level || 1}</td><td style="padding:8px;border-bottom:1px solid #f3f4f6">${coursesSummary || '—'}</td></tr>`;
+        });
+
+        html += '</tbody></table>';
+        adminEl.innerHTML = html;
+    } catch (err) {
+        adminEl.innerHTML = `<p class="auth-error">Error loading admin data: ${escapeHtml(err.message)}</p>`;
     }
 }
 
@@ -747,14 +846,17 @@ function startCourse(courseId) {
     safeFetchJSON(`/api/courses/${encodeURIComponent(courseId)}`)
         .then(({ ok, body }) => {
             const course = ok ? body : null;
-            // If there's a video URL, open it in the modal
-            if (course && course.videoUrl) {
+            // If course contains structured content, open study modal
+            if (course && Array.isArray(course.content) && course.content.length > 0) {
+                openStudyModal(course);
+            } else if (course && course.videoUrl) {
+                // Fallback to video modal if only video available
                 openVideoModal(course.videoUrl);
             }
 
-            // Simulate progress update when user starts a course
+            // Simulate progress update when user starts a course (small bump)
             setTimeout(() => {
-                updateCourseProgress(courseId, 25);
+                updateCourseProgress(courseId, 10);
                 showNotification(`📚 Progress saved for "${courseName}"`, 'success');
 
                 // Suggest relevant assessment after some progress
@@ -764,7 +866,7 @@ function startCourse(courseId) {
                         showNotification(`💡 Ready to test your skills? Try the ${assessmentData[relevantAssessment].title}`, 'info');
                     }
                 }, 2000);
-            }, 1200);
+            }, 800);
         })
         .catch(err => {
             console.warn('Failed to fetch course details:', err);
@@ -1195,4 +1297,152 @@ function openVideoModal(embedUrl) {
     videoFrame.src = embedUrl;
     videoModal.style.display = 'block';
     document.body.style.overflow = 'hidden';
+}
+
+// Study modal state
+let currentCourse = null;
+let currentLessonIndex = 0;
+
+function openStudyModal(course) {
+    currentCourse = course;
+    currentLessonIndex = 0;
+
+    const studyTitle = document.getElementById('studyTitle');
+    const studyDescription = document.getElementById('studyDescription');
+    const lessonList = document.getElementById('lessonList');
+
+    if (studyTitle) studyTitle.textContent = course.title || 'Course';
+    if (studyDescription) studyDescription.textContent = course.description || '';
+
+    // Build lesson list
+    lessonList.innerHTML = '';
+    const lessons = Array.isArray(course.content) ? course.content : [];
+    lessons.forEach((lesson, idx) => {
+        const li = document.createElement('li');
+        li.textContent = `${idx + 1}. ${lesson.title}`;
+        li.dataset.index = idx;
+        li.onclick = () => selectLesson(idx);
+        if (idx === 0) li.classList.add('active');
+        lessonList.appendChild(li);
+    });
+
+    // Show first lesson
+    if (lessons.length) selectLesson(0);
+
+    document.getElementById('studyModal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeStudyModal() {
+    const modal = document.getElementById('studyModal');
+    const frame = document.getElementById('lessonFrame');
+    if (modal) modal.style.display = 'none';
+    if (frame) frame.src = '';
+    document.body.style.overflow = 'auto';
+    currentCourse = null;
+    currentLessonIndex = 0;
+}
+
+function selectLesson(index) {
+    currentLessonIndex = index;
+    const lessons = Array.isArray(currentCourse && currentCourse.content) ? currentCourse.content : [];
+    const lesson = lessons[index];
+    if (!lesson) return;
+
+    // Highlight active
+    document.querySelectorAll('#lessonList li').forEach(li => li.classList.remove('active'));
+    const activeLi = document.querySelector(`#lessonList li[data-index='${index}']`);
+    if (activeLi) activeLi.classList.add('active');
+
+    // Populate lesson content
+    const lessonTitle = document.getElementById('lessonTitle');
+    const lessonBody = document.getElementById('lessonBody');
+    const lessonResources = document.getElementById('lessonResources');
+    const lessonVideo = document.getElementById('lessonVideo');
+    const lessonFrame = document.getElementById('lessonFrame');
+
+    if (lessonTitle) lessonTitle.textContent = lesson.title || `Lesson ${index + 1}`;
+    if (lessonBody) lessonBody.innerHTML = lesson.body ? lesson.body : '<p>No lesson content available.</p>';
+
+    // Resources
+    if (lessonResources) {
+        lessonResources.innerHTML = '';
+        if (Array.isArray(lesson.resources) && lesson.resources.length) {
+            const ul = document.createElement('ul');
+            lesson.resources.forEach(r => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = r.url || '#';
+                a.target = '_blank';
+                a.textContent = r.title || r.url;
+                li.appendChild(a);
+                ul.appendChild(li);
+            });
+            lessonResources.appendChild(ul);
+        }
+    }
+
+    // Video
+    if (lesson.videoUrl) {
+        if (lessonVideo) lessonVideo.style.display = 'block';
+        if (lessonFrame) lessonFrame.src = lesson.videoUrl;
+    } else {
+        if (lessonVideo) lessonVideo.style.display = 'none';
+        if (lessonFrame) lessonFrame.src = '';
+    }
+
+    // Update buttons visibility
+    const nextBtn = document.getElementById('nextLessonBtn');
+    if (nextBtn) nextBtn.style.display = (index < lessons.length - 1) ? 'inline-flex' : 'none';
+}
+
+function nextLesson() {
+    const lessons = Array.isArray(currentCourse && currentCourse.content) ? currentCourse.content : [];
+    if (currentLessonIndex < lessons.length - 1) {
+        selectLesson(currentLessonIndex + 1);
+    }
+}
+
+function completeLesson() {
+    const courseId = currentCourse && currentCourse.id;
+    const lessons = Array.isArray(currentCourse && currentCourse.content) ? currentCourse.content : [];
+    if (!courseId || !lessons.length) return;
+
+    // Mark lesson as complete in progress
+    const userProgress = JSON.parse(localStorage.getItem('userProgress')) || { courses: {}, challenges: {}, assessments: {}, xp: 0, level: 1 };
+    if (!userProgress.courses) userProgress.courses = {};
+    if (!userProgress.courses[courseId]) userProgress.courses[courseId] = { completed: false, progress: 0 };
+
+    const increment = Math.ceil(100 / lessons.length);
+    userProgress.courses[courseId].progress = Math.min(100, (userProgress.courses[courseId].progress || 0) + increment);
+    if (userProgress.courses[courseId].progress >= 100) {
+        userProgress.courses[courseId].completed = true;
+        userProgress.xp = (userProgress.xp || 0) + 300;
+        showNotification('🎓 Course completed! +300 XP earned!', 'success');
+    } else {
+        userProgress.xp = (userProgress.xp || 0) + 25;
+    }
+    userProgress.level = Math.floor(userProgress.xp / 500) + 1;
+
+    localStorage.setItem('userProgress', JSON.stringify(userProgress));
+    updateProgressDisplay();
+
+    // Persist to server when logged in
+    const token = localStorage.getItem('authToken');
+    if (token) {
+        fetch('/api/progress', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: JSON.stringify(userProgress)
+        }).catch(err => console.warn('Failed to persist progress:', err));
+    }
+
+    // Auto-advance to next lesson if available
+    const lessonsCount = lessons.length;
+    if (currentLessonIndex < lessonsCount - 1) {
+        selectLesson(currentLessonIndex + 1);
+    } else {
+        // Completed final lesson
+        showNotification('✅ You have finished all lessons for this course.', 'success');
+    }
 }

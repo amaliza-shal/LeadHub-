@@ -125,6 +125,21 @@ function getUserFromReq(req) {
   return null;
 }
 
+function isAdminReq(req) {
+  const email = getUserFromReq(req);
+  if (!email) return false;
+  const db = loadDB();
+  const user = db.users && db.users[email];
+  return !!(user && user.isAdmin);
+}
+
+// Admin: return all users' progress (admin-only)
+app.get('/api/admin/progress', (req, res) => {
+  if (!isAdminReq(req)) return res.status(403).json({ error: 'Forbidden' });
+  const db = loadDB();
+  return res.json({ users: db.users || {}, progress: db.progress || {} });
+});
+
 app.get('/api/progress', (req, res) => {
   const userEmail = getUserFromReq(req);
   if (!userEmail) return res.status(401).json({ error: 'Missing auth token' });

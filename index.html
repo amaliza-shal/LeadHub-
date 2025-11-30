@@ -26,6 +26,9 @@
                 <li><a href="#progress"><i class="fas fa-chart-line"></i> Progress</a></li>
                 <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
+            <div style="margin-left:16px;">
+                <a href="#admin" id="adminLink" style="text-decoration:none;color:var(--dark);font-weight:600;display:inline-flex;align-items:center;gap:8px;"><i class="fas fa-user-shield gold"></i> Admin</a>
+            </div>
             <div class="hamburger">
                 <span></span>
                 <span></span>
@@ -843,12 +846,54 @@
         </div>
     </section>
 
+    <!-- ADMIN SECTION -->
+    <section id="admin" class="section">
+        <div class="container">
+            <div class="section-header">
+                <h1>Admin Dashboard</h1>
+                <p>View student progress across courses and assessments.</p>
+            </div>
+
+            <div id="adminContent">
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+    </section>
+
     <!-- VIDEO MODAL -->
     <div id="videoModal" class="modal video-modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeVideoModal()">&times;</span>
             <div class="video-container">
                 <iframe id="videoFrame" width="100%" height="100%" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- STUDY/COURSE MODAL -->
+    <div id="studyModal" class="modal study-modal">
+        <div class="modal-content study-modal-content">
+            <span class="close-modal" onclick="closeStudyModal()">&times;</span>
+            <div class="study-panel">
+                <aside class="study-sidebar">
+                    <h3 id="studyTitle">Course</h3>
+                    <p id="studyDescription" class="study-description"></p>
+                    <ul id="lessonList" class="lesson-list"></ul>
+                </aside>
+                <main class="study-main">
+                    <h2 id="lessonTitle">Lesson</h2>
+                    <div id="lessonBody" class="lesson-body"></div>
+                    <div id="lessonResources" class="lesson-resources"></div>
+                    <div id="lessonVideo" class="lesson-video" style="display:none; margin-top:16px;">
+                        <div class="video-container">
+                            <iframe id="lessonFrame" width="100%" height="100%" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    <div style="margin-top:12px; display:flex; gap:8px;">
+                        <button id="completeLessonBtn" class="course-btn" onclick="completeLesson()">Mark Lesson Complete</button>
+                        <button id="nextLessonBtn" class="course-btn" onclick="nextLesson()">Next Lesson</button>
+                    </div>
+                </main>
             </div>
         </div>
     </div>
